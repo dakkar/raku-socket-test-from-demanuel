@@ -1,5 +1,4 @@
 #!/usr/bin/env raku
-use IO::Socket::Async::SSL;
 
 my $counter = 0;
 
@@ -27,7 +26,7 @@ sub MAIN() {
         my %ssl-config =
                 certificate-file => '/tmp/u/server-crt.pem',
                 private-key-file => '/tmp/u/server-key.pem';
-        whenever IO::Socket::Async::SSL.listen('localhost', 4433, |%ssl-config) -> $conn {
+        whenever IO::Socket::Async.listen('localhost', 4433) -> $conn {
             start serve-one($conn);
         }
     }

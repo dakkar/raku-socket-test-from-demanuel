@@ -1,11 +1,10 @@
 #!/usr/bin/env raku
-use IO::Socket::Async::SSL;
 
 sub one-client($channel,$consumer) {
 
     CATCH { say $_ };
 
-    my $conn = await IO::Socket::Async::SSL.connect('localhost', 4433, insecure => True);
+    my $conn = await IO::Socket::Async.connect('localhost', 4433);
     my $conn-supply = $conn.Supply;
 
     # Read the MOTD
