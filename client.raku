@@ -18,22 +18,25 @@ sub one-client($channel,$consumer) {
 
     react {
         whenever $channel -> $val {
+            say "[$consumer] -> SENDING";
             await $conn.print("SENDING\r\n");
+            say "[$consumer] sent";
 
             react {
                 whenever $conn-supply -> $line {
-                    print "[$consumer] $line";
+                    print "[$consumer] <- $line";
                     if $line ~~ /^340/ {
+                        say "[$consumer] -> $val";
                         await $conn.print("[$consumer]: value $val\r\n");
-                        done;
+                        say "[$consumer] sent";
                     } else {
+                        say "[$consumer] done for $val";
                         done;
                     }
                 }
-                LAST { say "[$consumer] DONE!" }
             }
+            LAST { say "[$consumer] done consuming channel" }
         }
-        LAST { say "[$consumer] TAP DONE!" }
     }
 }
 
@@ -41,8 +44,10 @@ multi MAIN() {
     my $channel = Channel.new();
     $channel.send($_) for ^29;
     $channel.close();
-    my @promises = do for ^4 -> $consumer {
-        start { one-client($channel,$consumer) }
+    one-client($channel,0);
+    exit;
+    my @promises = (^1).map: -> $consumer {
+        start one-client($channel,$consumer);
     }
 
     await Promise.allof(@promises);
