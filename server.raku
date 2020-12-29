@@ -1,12 +1,12 @@
-#!/usr/bin/env perl6
+#!/usr/bin/env raku
 use IO::Socket::Async::SSL;
 
 sub MAIN() {
     my $counter = 0;
     react {
         my %ssl-config =
-                certificate-file => '/tmp/server-crt.pem',
-                private-key-file => '/tmp/server-key.pem';
+                certificate-file => '/tmp/u/server-crt.pem',
+                private-key-file => '/tmp/u/server-key.pem';
         whenever IO::Socket::Async::SSL.listen('localhost', 4433, |%ssl-config) -> $conn {
             say "Got conn!";
             await $conn.print(get_fortune());
