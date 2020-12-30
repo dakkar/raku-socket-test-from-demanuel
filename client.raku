@@ -43,9 +43,8 @@ multi MAIN() {
     my $channel = Channel.new();
     $channel.send($_) for ^29;
     $channel.close();
-    one-client($channel,0);
-    exit;
-    my @promises = (^1).map: -> $consumer {
+
+    my @promises = (^4).map: -> $consumer {
         start one-client($channel,$consumer);
     }
 
