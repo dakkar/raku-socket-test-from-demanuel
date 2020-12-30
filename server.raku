@@ -5,17 +5,17 @@ my $counter = 0;
 
 sub serve-one($conn) {
     say "Got conn!";
-    await $conn.print(get_fortune());
+    $conn.print(get_fortune());
 
     react {
         whenever $conn.Supply.lines -> $line {
             say "<- $line";
             if $line.contains("SENDING") {
                 say "-> $counter";
-                await $conn.print("340 OK {$counter++}\r\n");
+                $conn.print("340 OK {$counter++}\r\n");
             } else {
                 say "-> ok";
-                await $conn.print("200 OK\r\n");
+                $conn.print("200 OK\r\n");
             }
             LAST { say "client disconnected" };
         }

@@ -19,16 +19,15 @@ sub one-client($channel,$consumer) {
     react {
         whenever $channel -> $val {
             say "[$consumer] -> SENDING";
-            await $conn.print("SENDING\r\n");
-            say "[$consumer] sent";
+            $conn.print("SENDING\r\n").then: { say "[$consumer] sent" };
 
             react {
                 whenever $conn-supply -> $line {
                     print "[$consumer] <- $line";
                     if $line ~~ /^340/ {
                         say "[$consumer] -> $val";
-                        await $conn.print("[$consumer]: value $val\r\n");
-                        say "[$consumer] sent";
+                        $conn.print("[$consumer]: value $val\r\n")
+                        .then: { say "[$consumer] sent" };
                     } else {
                         say "[$consumer] done for $val";
                         done;
